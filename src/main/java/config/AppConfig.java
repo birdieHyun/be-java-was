@@ -1,15 +1,25 @@
 package config;
 
 import controller.URLController;
-import controller.UserController;
+import controller.UserJoinController;
+import controller.UserLoginController;
+import session.Session;
 import session.SessionStore;
 import service.UserJoinService;
 import service.UserLoginService;
 
 public class AppConfig {
 
-    public static UserController userController() {
-        return new UserController(userJoinService(), userLoginService(), cookieStore());
+    public static UserJoinController userJoinController() {
+        return new UserJoinController(userJoinService());
+    }
+
+    public static UserLoginController userLoginController() {
+        return new UserLoginController(userLoginService(), sessionStore());
+    }
+
+    private static SessionStore sessionStore() {
+        return new SessionStore();
     }
 
     private static UserJoinService userJoinService() {

@@ -7,25 +7,32 @@ import org.slf4j.LoggerFactory;
 import request.HttpRequest;
 import response.HttpResponse;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 
 public class URLController {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
-    private final UserController userController = AppConfig.userController();
+    private final UserJoinController userJoinController = AppConfig.userJoinController();
+    private final UserLoginController userLoginController = AppConfig.userLoginController();
 
 
-    public String mapUrl(String path, HttpRequest httpRequest, HttpResponse httpResponse, BufferedReader br, Session cookie) throws IOException {
+    // TODO : 메서드 분리해주고, UserController와 UserJoinController 분리하기
+    public String mapUrl(String path, HttpRequest httpRequest, HttpResponse httpResponse, Session cookie) throws IOException {
         // localhost:8080 기본화면으로 이동
         if (path.equals("/")) {
             httpResponse.setStatus(200);
             return "/index.html";
         }
-        // userController 호출
-        if (path.startsWith("/user")) {
-            return userController.process(httpRequest, httpResponse, br, cookie);
+        // user 회원가입
+        if (path.startsWith("/user/form")) {
+            return userJoinController.process(httpRequest, httpResponse);
         }
+
+        // user 로그인
+        if (path.startsWith("/user/login")) {
+            return userLoginController.process(httpRequest, httpResponse, cookie);
+        }
+
 
         // 기본 경로로 이동
         httpResponse.setStatus(200);
