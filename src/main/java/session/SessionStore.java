@@ -1,4 +1,4 @@
-package cookie;
+package session;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,21 +6,21 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CookieStore {
+public class SessionStore {
 
-    private static Map<String, Cookie> cookieStore = new ConcurrentHashMap<>();
+    private static Map<String, Session> cookieStore = new ConcurrentHashMap<>();
 
-    public void saveCookie(Cookie cookie) {
+    public void saveCookie(Session cookie) {
         cookieStore.put(cookie.getUuid(), cookie);
     }
 
-    public static Optional<Cookie> findCookieByUUID(String uuid) {
+    public static Optional<Session> findCookieByUUID(String uuid) {
         return findAll().stream()
                 .filter(cookie -> cookie.getUuid().equals(uuid))
                 .findAny();
     }
 
-    private static List<Cookie> findAll() {
+    private static List<Session> findAll() {
         return new ArrayList<>(cookieStore.values());
     }
 }

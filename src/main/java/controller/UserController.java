@@ -1,7 +1,7 @@
 package controller;
 
-import cookie.Cookie;
-import cookie.CookieStore;
+import session.Session;
+import session.SessionStore;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,17 +20,17 @@ import static util.UserURL.*;
 public class UserController {
     private final UserJoinService userJoinService;
     private final UserLoginService userLoginService;
-    private final CookieStore cookieStore;
+    private final SessionStore cookieStore;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    public UserController(UserJoinService userJoinService, UserLoginService userLoginService, CookieStore cookieStore) {
+    public UserController(UserJoinService userJoinService, UserLoginService userLoginService, SessionStore cookieStore) {
         this.userJoinService = userJoinService;
         this.userLoginService = userLoginService;
         this.cookieStore = cookieStore;
     }
 
     // TODO : 에러페이지 생성, 회원가입 검증
-    public String process(HttpRequest request, HttpResponse response, BufferedReader br, Cookie cookie) throws IOException {
+    public String process(HttpRequest request, HttpResponse response, BufferedReader br, Session cookie) throws IOException {
         // GET 요청인 경우 분리
         if (request.getMethod().equals(HTTP_GET)) {
             // 회원 가입 폼 보여주기
@@ -66,7 +66,7 @@ public class UserController {
         return response.redirectHome();
     }
 
-    private String loginUser(HttpRequest request, HttpResponse response, BufferedReader br, Cookie cookie) throws IOException {
+    private String loginUser(HttpRequest request, HttpResponse response, BufferedReader br, Session cookie) throws IOException {
         String requestBody = request.getRequestBody(br);
         User loginUser = userLoginService.login(requestBody);
 

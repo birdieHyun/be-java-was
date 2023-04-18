@@ -2,7 +2,7 @@ package config;
 
 import controller.URLController;
 import controller.UserController;
-import cookie.CookieStore;
+import session.SessionStore;
 import service.UserJoinService;
 import service.UserLoginService;
 
@@ -24,7 +24,7 @@ public class AppConfig {
         return new UserLoginService();
     }
 
-    private static CookieStore cookieStore() {
-        return new CookieStore();
+    private static SessionStore cookieStore() {
+        return new SessionStore();
     }
 }

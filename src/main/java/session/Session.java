@@ -1,12 +1,12 @@
-package cookie;
+package session;
 
 import model.User;
 
-public class Cookie {
+public class Session {
     private String uuid;
     private User user;
 
-    public Cookie() {
+    public Session() {
     }
 
     public String getUuid() {
