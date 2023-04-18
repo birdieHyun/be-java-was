@@ -15,14 +15,17 @@ public class HttpRequest {
     private String url;
     private String httpVersion;
     private Map<String, String> params = new HashMap<>();
+    private Map<String, String> headers = new HashMap<>();
+    private BufferedReader br;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    public void setRequestLine(String requestLine) {
+    public void setRequestLine(String requestLine, BufferedReader br) throws IOException {
+        this.br = br;
         StringTokenizer requestTokens = new StringTokenizer(requestLine, " ");
         method = requestTokens.nextToken();
         String urlWithParams = requestTokens.nextToken();
         httpVersion = requestTokens.nextToken();
-
+        headers = getRequestHeader();
         //쿼리 파라미터가 있는 경우와 없는 경우 구분
         if (urlWithParams.contains("?")) {
             StringTokenizer urlTokens = new StringTokenizer(urlWithParams, "\\?");
@@ -32,6 +35,10 @@ public class HttpRequest {
             return ;
         }
         url = urlWithParams;
+    }
+
+    public String getRequestBody() throws IOException {
+        return IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
     }
 
     public String getMethod() {
@@ -64,7 +71,7 @@ public class HttpRequest {
         return params;
     }
 
-    private Map<String, String> getRequestHeader(BufferedReader br) throws IOException {
+    private Map<String, String> getRequestHeader() throws IOException {
         Map<String, String> headers = new HashMap<>();
         String requestHeader;
         while (!(requestHeader = br.readLine()).equals("")) {
@@ -75,10 +82,5 @@ public class HttpRequest {
             }
         }
         return headers;
-    }
-
-    public String getRequestBody(BufferedReader br) throws IOException {
-        Map<String, String> headers = getRequestHeader(br);
-        return IOUtils.readData(br, Integer.parseInt(headers.get("Content-Length")));
     }
 }

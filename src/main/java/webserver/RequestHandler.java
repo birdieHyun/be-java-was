@@ -32,12 +32,12 @@ public class RequestHandler implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
             HttpRequest httpRequest = new HttpRequest();
-            httpRequest.setRequestLine(br.readLine());
+            httpRequest.setRequestLine(br.readLine(), br);
             HttpResponse httpResponse = new HttpResponse();
             Session cookie = new Session();
 
             String path = httpRequest.getUrl();
-            path = urlController.mapUrl(path, httpRequest, httpResponse, br, cookie);
+            path = urlController.mapUrl(path, httpRequest, httpResponse, cookie);
 
 
             httpResponse.processResponse(path, httpResponse, out);
