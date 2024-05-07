@@ -5,17 +5,18 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 
 import config.AppConfig;
-import controller.UserController;
+import controller.URLController;
+import session.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.HttpRequest;
-import util.HttpResponse;
+import request.HttpRequest;
+import response.HttpResponse;
 
 public class RequestHandler implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
-    private final UserController userController = AppConfig.userController();
+    private final URLController urlController = AppConfig.urlController();
 
     public RequestHandler(Socket connection) {
         this.connection = connection;
@@ -26,25 +27,22 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+            // TODO 사용자 요청에 대한 처리는 이 곳에 구현 하면 된다.
 
             BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-            String line = br.readLine();
 
-            HttpRequest httpRequest = new HttpRequest(line);
+            HttpRequest httpRequest = new HttpRequest();
+            httpRequest.setRequestLine(br.readLine(), br);
             HttpResponse httpResponse = new HttpResponse();
+            Session cookie = new Session();
 
             String path = httpRequest.getUrl();
+            path = urlController.mapUrl(path, httpRequest, httpResponse, cookie);
 
-            // user 컨트롤러로 전송
-            if (path.startsWith("/user")) {
-                path = userController.process(httpRequest, httpResponse);
-            }
 
             httpResponse.processResponse(path, httpResponse, out);
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
-
 }
